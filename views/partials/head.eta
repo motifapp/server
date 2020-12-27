@@ -1,0 +1,15 @@
+<meta charset="utf-8" />
+<meta name="theme-color" content="<%= it.color %>" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no"
+/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta description="<%= it.description %>" />
+<meta name="description" content="<%= it.description %>" />
+
+<meta property="og:title" content="<%= it.title %>" />
+<meta property="og:description" content="<%= it.description %>" />
+<meta property="og:image" content="<%= it.image %>" />
+<meta property="og:image:width" content="200" />
+<meta property="og:image:height" content="200" />
