@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { getSubtitles } from 'youtube-captions-scraper';
+import fillerWords from '../utils/fillerWords';
 
 export default {
   path: '/api/v1',
@@ -8,15 +9,21 @@ export default {
 
     router.get('/youtube', async (req, res) => {
       const videoID = req.query.id;
-      const subtitles = await getSubtitles({ videoID });
+      const stripFillers = req.query.strip;
 
-      res.send(
-        subtitles.reduce(
-          (accumulator, currentSubtitle) =>
-            `${accumulator} ${currentSubtitle.text}`,
-          ''
-        )
+      const subtitlesRaw = await getSubtitles({ videoID });
+      let subtitles = subtitlesRaw.reduce(
+        (accumulator, currentSubtitle) => `${accumulator} ${currentSubtitle.text}`,
+        ''
       );
+
+      if (stripFillers) {
+        for (const word of fillerWords) {
+          subtitles = subtitles.replace(new RegExp(`\\s${word}\\s`, 'gim'), ' ');
+        }
+      }
+
+      res.json({ statusCode: 200, subtitles: subtitles.trim(), length: subtitlesRaw.length });
     });
 
     router.get('*', (_req, res) => {
