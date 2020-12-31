@@ -10,14 +10,9 @@ import morgan from 'morgan';
 
 // Routes
 import api from './routes/api';
-import normal from './routes/normal';
 
 export const initializeMiddlewareAndRoutes = async (app: Express) => {
   app.enable('trust proxy');
-  app.disable('view cache');
-
-  app.set('view engine', 'eta');
-  app.set('views', join(__dirname, '../views'));
 
   const middlewares = [
     bodyParser.json(),
@@ -28,7 +23,7 @@ export const initializeMiddlewareAndRoutes = async (app: Express) => {
     morgan('dev'),
   ];
 
-  const routes = [api, normal];
+  const routes = [api];
 
   for (const middleware of middlewares) {
     app.use(middleware);
