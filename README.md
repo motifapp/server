@@ -16,7 +16,7 @@ cd boilerplate
 yarn
 ```
 
-or just use vscode 🤡
+or just be small brain
 
 ### instructions
 

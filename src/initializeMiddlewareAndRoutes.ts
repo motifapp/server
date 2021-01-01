@@ -15,7 +15,7 @@ export const initializeMiddlewareAndRoutes = async (app: Express) => {
   app.enable('trust proxy');
 
   const middlewares = [
-    bodyParser.json(),
+    await bodyParser.json(),
     bodyParser.urlencoded({ extended: true }),
     boom(),
     cors({ origin: '*' }),

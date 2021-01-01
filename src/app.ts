@@ -16,7 +16,7 @@ const app = express();
 app.enable('trust proxy');
 app.disable('view cache');
 
-initializeMiddlewareAndRoutes(app);
+initializeMiddlewareAndRoutes(app)
 
 app.listen(config.PORT, (err) => {
   if (err) throw new Error(err);
