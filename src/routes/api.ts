@@ -1,8 +1,8 @@
 import { Router } from 'express';
 
+import cheerio from 'cheerio';
 import fetch from 'node-fetch';
 import stopword from 'stopword';
-import puppeteer from 'puppeteer';
 import normalize from 'normalize-url';
 
 const cache = new Map();
@@ -15,42 +15,29 @@ export default {
     router.get('/scrape', async (req, res) => {
       try {
         const url: string = req.body.url ?? req.query.url;
+
+        if (cache.has(url)) {
+          const content = cache.get(url);
+          return res.json({ content });
+        }
+
         const response = await fetch(normalize(url));
 
         if (!response.ok) return res.boom.badRequest('Not able to find page');
 
-        if (cache.has(url)) {
-          const content = cache.get(url);
-          return res.json({
-            statusCode: 200,
-            length: content.length,
-            cache: true,
-            content,
-          });
-        }
+        const $ = cheerio.load(await response.text());
 
-        const browser = await puppeteer.launch({
-          args: ['--no-sandbox', '--disable-setuid-sandbox'],
-        });
-        const page = await browser.newPage();
-        await page.goto(normalize(url), { waitUntil: 'networkidle2' });
-        const raw = await page.evaluate((el) => el.innerText, await page.$('body'));
-        const content = stopword
-          .removeStopwords(raw.split(' '))
-          .join(' ')
-          .replace(/[^a-zA-Z]/g, '')
-          .toLowerCase();
-
-        browser.close();
+        let content = $('body').text();
+        // Remove unecessary fillter words
+        content = stopword.removeStopwords(content.split(' ')).join(' ');
+        // Remove non-alphabet letters and lower
+        content = content.replace(/[^a-zA-Z]/g, '').toLowerCase();
+        // Remove
+        content = content.length > 16 && content.length < 2147483647 ? content : null;
 
         cache.set(url, content);
 
-        res.json({
-          statusCode: 200,
-          length: content.length,
-          cache: false,
-          content,
-        });
+        return res.json({ content });
       } catch (err) {
         res.boom.badRequest(err);
       }
