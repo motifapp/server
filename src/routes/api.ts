@@ -37,7 +37,7 @@ export default {
         // Remove unecessary fillter words
         content = stopword.removeStopwords(content.split(' ')).join(' ');
         // Remove non-alphabet
-        content = content.replace(/[^a-zA-Z- ]/gim, '');
+        content = content.replace(/[^a-zA-Z ]/gim, '');
         // Remove excessive spaces
         content = content.replace(/[ ]{2,}/gim, ' ');
         // Remove out of bound lengths
