@@ -1,11 +1,13 @@
 import { Router } from 'express';
 
 import nlp from 'compromise';
+import Sentiment from 'sentiment';
 import cheerio from 'cheerio';
 import fetch from 'node-fetch';
 import stopword from 'stopword';
 import normalize from 'normalize-url';
 import susWords from '../utils/susWords';
+import { bias } from '../utils/genderBias';
 
 const cache = new Map();
 
@@ -13,6 +15,7 @@ export default {
   path: '/api/v1',
   action() {
     const router = new Router();
+    const sentiment = new Sentiment();
     const susRE = new RegExp(`${susWords.join('|')}`, 'gim');
 
     router.get('/scrape', async (req, res) => {
@@ -42,13 +45,20 @@ export default {
 
         const susMatches = content.match(susRE);
         const susMatchesAsRawString = susMatches.join('');
+        const { score, comparative } = sentiment.analyze(content);
 
         const payload = {
           metrics: {
-            numberOfSusWords: susMatches.length,
-            numberOfSusCharacters: susMatchesAsRawString.length,
-            totalNumberOfCharacters: content.length,
-            percentageOfSusToTotal: (susMatchesAsRawString.length / content.length) * 100,
+            preliminary: {
+              numberOfSusWords: susMatches.length,
+              numberOfSusCharacters: susMatchesAsRawString.length,
+              totalNumberOfCharacters: content.length,
+              percentageOfSusToTotal: (susMatchesAsRawString.length / content.length) * 100,
+            },
+            nlp: {
+              sentimentData: { score, comparative },
+              genderBias: bias(content).verdict
+            },
           },
           content,
         };
