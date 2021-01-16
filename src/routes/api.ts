@@ -1,9 +1,11 @@
 import { Router } from 'express';
 
+import nlp from 'compromise';
 import cheerio from 'cheerio';
 import fetch from 'node-fetch';
 import stopword from 'stopword';
 import normalize from 'normalize-url';
+import susWords from '../utils/susWords';
 
 const cache = new Map();
 
@@ -11,14 +13,15 @@ export default {
   path: '/api/v1',
   action() {
     const router = new Router();
+    const susRE = new RegExp(`${susWords.join('|')}`, 'gim');
 
     router.get('/scrape', async (req, res) => {
       try {
         const url: string = req.body.url ?? req.query.url;
+        const shouldCache: string = req.body.cache ?? req.query.cache ?? true;
 
-        if (cache.has(url)) {
-          const content = cache.get(url);
-          return res.json({ content });
+        if (shouldCache && cache.has(url)) {
+          return res.json(cache.get(url));
         }
 
         const response = await fetch(normalize(url));
@@ -30,14 +33,29 @@ export default {
         let content = $('body').text();
         // Remove unecessary fillter words
         content = stopword.removeStopwords(content.split(' ')).join(' ');
-        // Remove non-alphabet letters and lower
-        content = content.replace(/[^a-zA-Z]/g, '').toLowerCase();
-        // Remove
-        content = content.length > 16 && content.length < 2147483647 ? content : null;
+        // Remove non-alphabet
+        content = content.replace(/[^a-zA-Z- ]/gim, '');
+        // Remove excessive spaces
+        content = content.replace(/[ ]{2,}/gim, ' ');
+        // Remove out of bound lengths
+        content = content.length > 16 && content.length < 2147483647 ? content.toLowerCase() : null;
 
-        cache.set(url, content);
+        const susMatches = content.match(susRE);
+        const susMatchesAsRawString = susMatches.join('');
 
-        return res.json({ content });
+        const payload = {
+          metrics: {
+            numberOfSusWords: susMatches.length,
+            numberOfSusCharacters: susMatchesAsRawString.length,
+            totalNumberOfCharacters: content.length,
+            percentageOfSusToTotal: (susMatchesAsRawString.length / content.length) * 100,
+          },
+          content,
+        };
+
+        if (shouldCache) cache.set(url, payload);
+
+        return res.json(payload);
       } catch (err) {
         res.boom.badRequest(err);
       }

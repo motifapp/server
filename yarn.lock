@@ -267,6 +267,13 @@ compression@^1.7.4:
     safe-buffer "5.1.2"
     vary "~1.1.2"
 
+compromise@^13.8.0:
+  version "13.8.0"
+  resolved "https://registry.yarnpkg.com/compromise/-/compromise-13.8.0.tgz#05dc8a0e3a248b499fc49b3b6a451af0c74c8efa"
+  integrity sha512-j+hIo096v9S3lEC9iEFP2nVqCDwvWD3GyqvL/fSIo4CcJ8ddFTbvufeTWcvfcpxU8dLkKLmcUIvM3EXu4Sw5mg==
+  dependencies:
+    efrt-unpack "2.2.0"
+
 concat-map@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
@@ -432,6 +439,11 @@ ee-first@1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
   integrity sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
+
+efrt-unpack@2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/efrt-unpack/-/efrt-unpack-2.2.0.tgz#b05dbec0fb8cb346a27840e00c969df9c72fee52"
+  integrity sha512-9xUSSj7qcUxz+0r4X3+bwUNttEfGfK5AH+LVa1aTpqdAfrN5VhROYCfcF+up4hp5OL7IUKcZJJrzAGipQRDoiQ==
 
 emoji-regex@^7.0.1:
   version "7.0.3"
