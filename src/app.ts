@@ -1,15 +1,7 @@
 import express from 'express';
-import mongoose from 'mongoose';
 import config from './config';
 
-import initializeMiddlewareAndRoutes from './initializeMiddlewareAndRoutes';
-
-// mongoose.connect(config.MONGO_URL, {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-//   useFindAndModify: false,
-//   useCreateIndex: true,
-// });
+import initializeMiddlewareAndRoutes from './init';
 
 const app = express();
 
