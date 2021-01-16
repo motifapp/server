@@ -18,7 +18,7 @@ export default {
     router.get('/scrape', async (req, res) => {
       try {
         const url: string = req.body.url ?? req.query.url;
-        const shouldCache: string = req.body.cache ?? req.query.cache ?? true;
+        const shouldCache: boolean = req.body.cache ?? req.query.cache ?? true;
 
         if (shouldCache && cache.has(url)) {
           return res.json(cache.get(url));
