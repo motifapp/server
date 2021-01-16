@@ -1,5 +1,4 @@
 import { Express } from 'express';
-import { join } from 'path';
 
 // Middleware
 import bodyParser from 'body-parser';
