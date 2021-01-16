@@ -33,9 +33,9 @@ export default {
 
         const $ = cheerio.load(await response.text());
 
-        let content = $('body').text();
+        const raw = $('body').text();
         // Remove unecessary fillter words
-        content = stopword.removeStopwords(content.split(' ')).join(' ');
+        let content = stopword.removeStopwords(raw.split(' ')).join(' ');
         // Remove non-alphabet
         content = content.replace(/[^a-zA-Z ]/gim, '');
         // Remove excessive spaces
@@ -59,7 +59,7 @@ export default {
               genderBias: bias(content),
             },
           },
-          content,
+          content: raw,
         };
 
         if (shouldCache) cache.set(url, payload);
