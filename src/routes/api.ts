@@ -53,11 +53,10 @@ export default {
               numberOfSusWords: susMatches.length,
               numberOfSusCharacters: susMatchesAsRawString.length,
               totalNumberOfCharacters: content.length,
-              percentageOfSusToTotal: (susMatchesAsRawString.length / content.length) * 100,
             },
             nlp: {
               sentimentData: { score, comparative },
-              genderBias: bias(content).verdict
+              genderBias: bias(content),
             },
           },
           content,

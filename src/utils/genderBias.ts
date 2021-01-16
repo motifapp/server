@@ -45,8 +45,7 @@ export function bias(phrase) {
 
   return {
     verdict: coding,
-    coding_score,
-    feminine_words,
-    masculine_words,
+    female: feminine_word_count,
+    male: masculine_word_count,
   };
 }
