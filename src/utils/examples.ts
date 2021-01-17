@@ -1,0 +1,18 @@
+export default [
+  [`You have the right to your privacy`, `good`],
+  [`location of a photo`, `bad`],
+  [`SMS log history`, `bad`],
+  [`nearby Wi-Fi access points`, `bad`],
+  [`devices that are nearby or on your network`, `bad`],
+  [`We respect your privacy`, `good`],
+  [`track your location`, `bad`],
+  [`we do not sell your data to advertisers`, `good`],
+  [`screenshots`, `bad`],
+  // [`track you`, `bad`],
+  // [`we do not track you`, `good`],
+  [`at our discretion`, `bad`],
+  // [`the right to`, `good`],
+  // [`does not sell`, `good`],
+  [`not have the ability to access your messages`, `good`],
+  [`cannot decrypt or otherwise access the content of your messages or calls`, `good`],
+];

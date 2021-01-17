@@ -1,8 +1,6 @@
 export default [
   'share',
   'shar',
-  'privacy',
-  'private',
   'identifiable',
   'metadata',
   'meta data',
