@@ -63,24 +63,22 @@ export default {
       classifier.train();
     };
 
-    const average = (...nums: number[]) => {
-      return nums.reduce((a, b) => a + b) / nums.length;
+    const average = (a, b) => {
+      return a + b / 2;
     };
 
     const getTeardown = (content: string) => {
       const sentences = getSentences(content);
       const sentiment = {
-        sentenceBySentenceScores: [],
+        sentenceBySentenceScore: [],
         metrics: {
           sentenceMajority: 0,
-          genericAnalysis: 0,
         },
       };
       const classification = {
         sentenceBySentenceScore: [],
         metrics: {
           sentenceMajority: 'neutral',
-          genericAnalysis: 'neutral',
           teardown: {
             good: 0,
             bad: 0,
@@ -91,7 +89,6 @@ export default {
         sentenceBySentenceScore: [],
         metrics: {
           sentenceMajority: 0,
-          genericAnalysis: 0,
           teardown: {
             total: 0,
           },
@@ -101,7 +98,6 @@ export default {
         sentenceBySentenceScore: [],
         metrics: {
           sentenceMajority: 'neutral',
-          genericAnalysis: 'neutral',
           teardown: {
             male: 0,
             female: 0,
@@ -115,21 +111,21 @@ export default {
         const sentimentScore = getSentimentFromSentence(getWords(sentence));
         const keywordMatches = (sentence.match(MATCH_KEYWORD_RE) || []).length;
 
-        sentiment.sentenceBySentenceScores.push(sentimentScore);
+        sentiment.sentenceBySentenceScore.push(sentimentScore);
         sentiment.metrics.sentenceMajority += sentimentScore;
         classification.sentenceBySentenceScore.push(getClassification(sentence));
         staticKeyword.sentenceBySentenceScore.push(keywordMatches);
-        staticKeyword.metrics.sentenceMajority += average(
-          staticKeyword.metrics.sentenceMajority,
-          keywordMatches / getWords(sentence).length
-        );
+        if (staticKeyword.metrics.sentenceMajority !== 0) {
+          staticKeyword.metrics.sentenceMajority += average(
+            staticKeyword.metrics.sentenceMajority,
+            keywordMatches / getWords(sentence).length
+          );
+        } else {
+          staticKeyword.metrics.sentenceMajority = keywordMatches / getWords(sentence).length;
+        }
         staticKeyword.metrics.teardown.total += keywordMatches;
         genderBias.sentenceBySentenceScore.push(bias(sentence).verdict);
       }
-
-      sentiment.metrics.genericAnalysis = getSentimentFromSentence(getWords(content));
-      staticKeyword.metrics.genericAnalysis =
-        (content.match(MATCH_KEYWORD_RE) || []).length / getWords(content).length;
 
       const maleClassifications = genderBias.sentenceBySentenceScore.filter(
         (classification) => classification === 'male'
@@ -140,9 +136,7 @@ export default {
       genderBias.metrics.sentenceMajority =
         maleClassifications > femaleClassifications ? 'male' : 'female';
 
-      const { verdict, female, male } = bias(content);
-
-      genderBias.metrics.genericAnalysis = verdict;
+      const { female, male } = bias(content);
 
       genderBias.metrics.teardown.female = female;
       genderBias.metrics.teardown.male = male;
@@ -157,10 +151,13 @@ export default {
       classification.metrics.sentenceMajority =
         goodClassifications > badClassifications ? 'good' : 'bad';
 
-      classification.metrics.genericAnalysis = getClassification(content);
-
       classification.metrics.teardown.good = goodClassifications;
       classification.metrics.teardown.bad = badClassifications;
+
+      delete sentiment.sentenceBySentenceScore;
+      delete classification.sentenceBySentenceScore;
+      delete staticKeyword.sentenceBySentenceScore;
+      delete genderBias.sentenceBySentenceScore;
 
       return { sentiment, classification, staticKeyword, genderBias };
     };
