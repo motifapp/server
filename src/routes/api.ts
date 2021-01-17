@@ -64,7 +64,7 @@ export default {
     };
 
     const average = (a, b) => {
-      return a + b / 2;
+      return (a + b) / 2;
     };
 
     const getTeardown = (content: string) => {
@@ -125,8 +125,7 @@ export default {
 
       const femaleClassifications = genderBias.sentenceBySentenceScore.length - maleClassifications;
 
-      genderBias.verdict =
-        maleClassifications > femaleClassifications ? 'male' : 'female';
+      genderBias.verdict = maleClassifications > femaleClassifications ? 'male' : 'female';
 
       const { female, male } = bias(content);
 
@@ -140,8 +139,7 @@ export default {
       const badClassifications =
         classification.sentenceBySentenceScore.length - goodClassifications;
 
-      classification.verdict =
-        goodClassifications > badClassifications ? 'good' : 'bad';
+      classification.verdict = goodClassifications > badClassifications ? 'good' : 'bad';
 
       classification.teardown.good = goodClassifications;
       classification.teardown.bad = badClassifications;
@@ -165,7 +163,6 @@ export default {
         const raw = await scrapeTextFromURL(url);
         const teardown = getTeardown(raw);
         const payload = { ...teardown, numberOfSentences: getSentences(raw).length };
-
 
         cache.set(url, payload);
 
