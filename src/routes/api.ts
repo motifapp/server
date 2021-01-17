@@ -59,7 +59,7 @@ export default {
         classifier.addDocument(key, value);
       }
 
-      // classifier.addDocument(keywords, 'bad');
+      classifier.addDocument(keywords, 'bad');
       classifier.train();
     };
 
@@ -103,13 +103,13 @@ export default {
         sentiment.verdict += sentimentScore;
         classification.sentenceBySentenceScore.push(getClassification(sentence));
         staticKeyword.sentenceBySentenceScore.push(keywordMatches);
-        staticKeyword.verdict += keywordMatches;
+        staticKeyword.verdict += 2 ** (keywordMatches / getWords(sentence).length * 10) - 1;
 
         staticKeyword.teardown.total += keywordMatches;
         genderBias.sentenceBySentenceScore.push(bias(sentence).verdict);
       }
 
-      staticKeyword.verdict /= getWords(content).length;
+      staticKeyword.verdict /= sentences.length * 10;
 
       const maleClassifications = genderBias.sentenceBySentenceScore.filter(
         (classification) => classification === 'male'
@@ -131,7 +131,7 @@ export default {
       const badClassifications =
         classification.sentenceBySentenceScore.length - goodClassifications;
 
-      classification.verdict = goodClassifications > badClassifications ? 'good' : 'bad';
+      classification.verdict = goodClassifications * 0.4 > badClassifications * 0.6 ? 'good' : 'bad';
 
       classification.teardown.good = goodClassifications;
       classification.teardown.bad = badClassifications;
