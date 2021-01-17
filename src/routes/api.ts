@@ -178,7 +178,7 @@ export default {
 
         cache.set(url, teardown);
 
-        return res.json(teardown);
+        return res.json({ teardown, numberOfSentences: getSentences(raw).length });
       } catch (err) {
         res.boom.badRequest(err);
       }
