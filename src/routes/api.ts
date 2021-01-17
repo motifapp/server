@@ -5,6 +5,7 @@ import fetch from 'node-fetch';
 import normalize from 'normalize-url';
 import keywords from '../utils/keywords';
 import examples from '../utils/examples';
+import { bias } from '../utils/genderBias';
 
 import {
   WordTokenizer,
@@ -13,8 +14,6 @@ import {
   PorterStemmer,
   BayesClassifier,
 } from 'natural';
-import { getPackedSettings } from 'http2';
-import { stringify } from 'querystring';
 
 export default {
   path: '/api/v1',
@@ -98,6 +97,17 @@ export default {
           },
         },
       };
+      const genderBias = {
+        sentenceBySentenceScore: [],
+        metrics: {
+          sentenceMajority: 'neutral',
+          genericAnalysis: 'neutral',
+          teardown: {
+            male: 0,
+            female: 0,
+          },
+        },
+      };
 
       const MATCH_KEYWORD_RE = new RegExp(`\\b${keywords.join('|')}\\b`, 'gim');
 
@@ -114,11 +124,28 @@ export default {
           keywordMatches / getWords(sentence).length
         );
         staticKeyword.metrics.teardown.total += keywordMatches;
+        genderBias.sentenceBySentenceScore.push(bias(sentence).verdict);
       }
 
       sentiment.metrics.genericAnalysis = getSentimentFromSentence(getWords(content));
       staticKeyword.metrics.genericAnalysis =
         (content.match(MATCH_KEYWORD_RE) || []).length / getWords(content).length;
+
+      const maleClassifications = genderBias.sentenceBySentenceScore.filter(
+        (classification) => classification === 'male'
+      ).length;
+
+      const femaleClassifications = genderBias.sentenceBySentenceScore.length - maleClassifications;
+
+      genderBias.metrics.sentenceMajority =
+        maleClassifications > femaleClassifications ? 'male' : 'female';
+
+      const { verdict, female, male } = bias(content);
+
+      genderBias.metrics.genericAnalysis = verdict;
+
+      genderBias.metrics.teardown.female = female;
+      genderBias.metrics.teardown.male = male;
 
       const goodClassifications = classification.sentenceBySentenceScore.filter(
         (classification) => classification === 'good'
@@ -135,7 +162,7 @@ export default {
       classification.metrics.teardown.good = goodClassifications;
       classification.metrics.teardown.bad = badClassifications;
 
-      return { sentiment, classification, staticKeyword };
+      return { sentiment, classification, staticKeyword, genderBias };
     };
 
     trainClassifier(examples, keywords);
