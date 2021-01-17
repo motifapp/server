@@ -56,7 +56,7 @@ export default {
 
     const trainClassifier = (data: string[][], keywords: string[]) => {
       for (const [key, value] of data) {
-        classifier.addDocument(key, value);
+        classifier.addDocument(key.toLowerCase(), value);
       }
 
       classifier.addDocument(keywords, 'bad');
@@ -131,7 +131,7 @@ export default {
       const badClassifications =
         classification.sentenceBySentenceScore.length - goodClassifications;
 
-      classification.verdict = goodClassifications * 0.4 > badClassifications * 0.6 ? 'good' : 'bad';
+      classification.verdict = goodClassifications > badClassifications ? 'good' : 'bad';
 
       classification.teardown.good = goodClassifications;
       classification.teardown.bad = badClassifications;
