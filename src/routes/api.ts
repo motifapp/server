@@ -33,13 +33,11 @@ export default {
 
         const $ = cheerio.load(await response.text());
 
-        const raw = $('body').text();
+        const raw = $('body').text().replace(/\s/gim, ' ');
         // Remove unecessary fillter words
         let content = stopword.removeStopwords(raw.split(' ')).join(' ');
         // Remove non-alphabet
         content = content.replace(/[^a-zA-Z ]/gim, '');
-        // Remove excessive spaces
-        content = content.replace(/[ ]{2,}/gim, ' ');
         // Remove out of bound lengths
         content = content.length > 16 && content.length < 2147483647 ? content.toLowerCase() : null;
 
@@ -52,7 +50,7 @@ export default {
             preliminary: {
               numberOfSusWords: susMatches.length,
               numberOfSusCharacters: susMatchesAsRawString.length,
-              totalNumberOfCharacters: content.length,
+              totalNumberOfCharacters: raw.length,
             },
             nlp: {
               sentimentData: { score, comparative },
