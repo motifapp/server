@@ -63,10 +63,6 @@ export default {
       classifier.train();
     };
 
-    const average = (a, b) => {
-      return (a + b) / 2;
-    };
-
     const getTeardown = (content: string) => {
       const sentences = getSentences(content);
       const sentiment = {
@@ -107,17 +103,13 @@ export default {
         sentiment.verdict += sentimentScore;
         classification.sentenceBySentenceScore.push(getClassification(sentence));
         staticKeyword.sentenceBySentenceScore.push(keywordMatches);
-        if (staticKeyword.verdict !== 0) {
-          staticKeyword.verdict = average(
-            staticKeyword.verdict,
-            keywordMatches / getWords(sentence).length
-          );
-        } else {
-          staticKeyword.verdict = keywordMatches / getWords(sentence).length;
-        }
+        staticKeyword.verdict += keywordMatches;
+
         staticKeyword.teardown.total += keywordMatches;
         genderBias.sentenceBySentenceScore.push(bias(sentence).verdict);
       }
+
+      staticKeyword.verdict /= getWords(content).length;
 
       const maleClassifications = genderBias.sentenceBySentenceScore.filter(
         (classification) => classification === 'male'
