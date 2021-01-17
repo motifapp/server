@@ -164,10 +164,12 @@ export default {
 
         const raw = await scrapeTextFromURL(url);
         const teardown = getTeardown(raw);
+        const payload = { ...teardown, numberOfSentences: getSentences(raw).length };
 
-        cache.set(url, teardown);
 
-        return res.json({ ...teardown, numberOfSentences: getSentences(raw).length });
+        cache.set(url, payload);
+
+        return res.json(payload);
       } catch (err) {
         res.boom.badRequest(err);
       }
