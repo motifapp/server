@@ -14,14 +14,14 @@ export default [
   [`the right to`, `good`],
   [`does not sell`, `good`],
   // [`not have the ability to access your messages`, `good`],
-  // [`cannot decrypt or otherwise access the content of your messages or calls`, `good`],
+  [`cannot decrypt or otherwise access the content of your messages or calls`, `good`],
   [`generate revenues from your use of the Services`, `bad`],
   [`We collect information about your location`, `bad`],
   // feel free to remove it if you want
   [`targeted advertising on the Platform`, `bad`],
   [`business partners to collect information about you`, `bad`],
   [`does not sell personal information to third parties`, `bad`],
-  // [`You may submit a request to access or delete the information`, `good`],
-  // [`help protect information from loss, theft, misuse and unauthorized access`, `good`],
+  [`You may submit a request to access or delete the information`, `good`],
+  [`help protect information from loss, theft, misuse and unauthorized access`, `good`],
   [`We disclose your information to third parties`, `bad`],
 ];

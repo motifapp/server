@@ -12,7 +12,7 @@ import {
   SentenceTokenizer,
   SentimentAnalyzer,
   PorterStemmer,
-  BayesClassifier,
+  LogisticRegressionClassifier,
 } from 'natural';
 
 export default {
@@ -22,7 +22,7 @@ export default {
     const wordTokenizer = new WordTokenizer();
     const sentenceTokenizer = new SentenceTokenizer();
     const sentimentAnalyzer = new SentimentAnalyzer('English', PorterStemmer, 'senticon');
-    const classifier = new BayesClassifier();
+    const classifier = new LogisticRegressionClassifier();
 
     const cache = new Map();
 
